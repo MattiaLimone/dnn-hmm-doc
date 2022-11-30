@@ -1,0 +1,27 @@
+\subsection{Autoencoder}
+
+In this section, we are going to define the architecture of the CNN and LSTM autoencoders we used to pre-train the two branches of the network used in this experiment.
+
+Autoencoders are an unsupervised artificial neural network class that learn how to efficiently encode an input vector, creating a compressed but meaningful "latent space" representation of it, in order to reconstruct it back obtaining a vector that is as close as possible to the original one. Furthermore, by design, autoencoders reduce data dimensions by learning how to ignore the noise in the data, thus they serve as very good de-noising tools.
+
+They generally consists of four components:
+\begin{description}
+    \item[Encoder:] one or more stacked neural network layers $e_0, ..., e_h$ composing a function $f$, in which the model learns how to reduce the input dimensions and compress the input pattern $x$ into an encoded representation $f(x)$.
+    
+    \item[Bottleneck:]: the last encoder layer $e_h$, containing the compressed representation $f(x)$.
+    
+    \item[Decoder:] one or more stacked neural network layers $d_1, ..., d_r$ (usually, the decoder is built in a mirror-like fashion with respect to the encoder, so $r = h$, $d_1$ has the same parameters as $l_h$, $d_2$ has the same as $l_{h-1}$ and so on). These layers compose a decoder function $g$, in which the model learns how to reconstruct the original input data from the encoded representation $f(x)$ in such a way that $g(f(x))$ is as close to the original input $x$ as possible.
+    
+    \item[Reconstruction Loss:] exactly as in regular neural networks, autoencoders are trained with an optimization algorithm in order to minimize a loss function $J$; the only difference here is that in autoencoders the loss represents the distance between input and reconstructed output:
+    $$
+    J = \frac{1}{|D|} \sum_{x \in D} L(x, \hat{x}) \text{, }
+    $$
+    where $\hat{x}$ is the reconstruction of the network on input $x$.
+    
+    Often, regularization techniques such as dropout \cite{dropout} or regularization terms added to the autoencoder loss functions are used, since this has the double advantage of reducing overfitting and make the learned representation sparse, which is more suitable for different tasks other than input reconstruction, which is exactly the aim of pre-training. Another way to make the learned representation sparse is to add penalization term to the loss, based on the activation value of the bottleneck neurons:
+    
+    $$J = \frac{1}{|D|} \sum_{x \in D} L(x, \hat{x}) + \lambda \sum_i a^{(h)}_i \text{, }$$
+    where $a^{(h)}_i$ is the activation value of the $i$-th neuron of the bottleneck.
+    
+    By virtue of the above, dropout and activation penalization techniques were applied to the autoencoders created for the pre-training phase of this study to make the learned audio representation as sparse as possible.
+\end{description}

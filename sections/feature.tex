@@ -1,0 +1,12 @@
+\section{Feature Extraction}
+\label{sec:feature_extraction}
+
+Feature extraction is one of the key steps in all supervised learning problems. The resulting feature vector (in numeric form) of the feature extraction step is fed as an input into machine learning algorithms (K-NN, SVM, NB, etc.) for the construction and validation of classification/regression model~\cite{jahangir:review}.
+
+Short-term spectral features are extracted from short frames (\num{20} - \SI{30}{ms}) of speech signals, as the speech signal changes continuously due to the articulation of sounds. As a result of these short frames, the extracted features are perceived to be stationary and preserve the local information. Mel Frequency Cepstral Coefficients (MFCCs) and Linear Predictor Cepstral Coefficients (LPCCs) are the most widely employed short-term spectral features in speaker identification~\cite{jahangir:review}, indeed we could say that cepstral coefficients derived from either linear prediction analysis or a filter bank approach are today still considered the de-facto standard in the audio feature extraction~\cite{rao:spectral}, even if many deep learning-related works \cite{si:sincnet}, \cite{si:lstm}, \cite{si:cnn} have shown how less refined features (raw waveform signals, raw log-spectrograms or Mel-scaled log-spectrum features, ...) can also be just as effective if not better in some cases.
+
+It's important to note that one of the reasons for such success is that spectral features represent phonetic information, since they are derived directly from spectra~\cite{rao:spectral}, and these are the ones that allow a better discerning between speakers. In the next two sections we go in more details about the two aforementioned coefficients and how we used them in our study.
+
+\input{sections/mfcc}
+
+\input{sections/lpcc}

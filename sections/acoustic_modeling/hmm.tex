@@ -1,0 +1,81 @@
+\subsection{HMM}
+
+Hidden Markov Model (HMM) is a statistical modeling technique with an underlying couple of stochastic processes, an hidden (i.e. not observable) one, and an observable one. 
+
+The hidden stochastic process is represented by finite set of possible states, called \textbf{hidden state space} $S = \{s_1, s_2, ..., s_K\}$, transitioning to each other overtime with fixed probabilities, generating a sequence of states $q_1, q_2, ..., q_T$. \\
+The main assumption on which HMM are built is that the probability of transiting into a state $s_i$ at the time $t$ depends solely on the previous state $q_{t-1}$ (this is also called Markov Hypothesis \cite{markovbook}), hence:
+
+$$P(q_t = s_i \, | \, q_1, q_2, ..., q_{t-1}) = P(q_t = s_i \, | \, q_{t-1})$$
+this makes possible to collect these probabilities \textbf{transition matrix}:
+
+$$
+A = 
+\begin{bmatrix}
+    t_{1,1} & t_{1,2} & \dots  & t_{1, K} \\
+    t_{2, 1} & t_{2, 2} & \dots  & t_{2, K} \\
+    \vdots & \vdots & \ddots & \vdots \\
+    t_{K, 1} & t_{K, 2} & \dots  & t_{K, K}
+\end{bmatrix}, \text{ where:}
+$$
+
+$$t_{i, j} = P(q_t = s_i \, | \, q_{t-1} = s_j);$$
+this transition matrix can be viewed as one of the three fundamental parameters that define an HMM. Based on the structure of the transition matrix, several HMM \textit{topologies} are defined (as seen in Figure \vref{fig:topologies_ergodic}, 
+\vref{fig:topologies_left_to_right},
+\vref{fig:topologies_left_to_right_cyclic},
+\vref{fig:topologies_bidirectional}):
+
+\begin{description}
+    \item[Ergodic:] there is no 0 probability in the transition matrix, $t_{i, j} > 0, \forall i,j \in \{1,2, ..., K\}$, so each state can be reached from each state with a non-zero probability; 
+    
+    \item[Left-to-right:] there exists a topological order between the states $q_1, q_2, ..., q_K$ such that for every non-zero transition $t_{i, j} > 0 \implies i < j$; 
+    
+    \item[Left-to-right cyclic:] there exists an ordering between the states $q_1, q_2, ..., q_K$ such that for every non-zero transition $t_{i, j} > 0 \implies i \leq j$ (there can also be self-loops);
+    
+    \item[Bidirectional:] the HMM transitions can be split in two sets $A, B$ such that each transition $t_{i, j} > 0 \in A \implies i \leq j$ and $t_{i, j} > 0 \in B \implies i \geq j$.
+\end{description}
+
+\input{sections/acoustic_modeling/topologies/a}
+\input{sections/acoustic_modeling/topologies/b}
+\input{sections/acoustic_modeling/topologies/c}
+\input{sections/acoustic_modeling/topologies/d}
+The second fundamental parameter of an HMM is the \textbf{prior distribution} vector, which defines the probability that a sequence of states $q_1, q_2, ..., q_T$ has of starting with each state $s_1, s_2, ..., s_K$:
+
+$$\pi = [\pi_1, \pi_2, ..., \pi_K], \text{ where:}$$
+$$\pi_i = P(q_1 = s_i), \forall i \in \{1, 2, ..., K\}.$$
+The third and last parameter of HMM is the so-called \textbf{emission distribution}. As said before, an HMM has two underlying stochastic processes: an hidden and an observable one; similar to the former, the latter also produces a sequence over time, called \textit{observation sequence} $o_1, o_2, ..., o_T$.
+At each time $t$, the \textbf{emission distribution} defines the probability density function (or discrete density function if the possible observation are countable) of an observation $o_t$, given the current state $s_t$:
+
+$$e(o_t \, | \, s_t) = f_D(o_t \, | \, s_t) \text{ (continuous case) } $$
+
+$$e(o_t \, | \, s_t) = P(o_t \, | \, s_t) \text{ (discrete case).} $$
+Given a set of observations:
+$$X = \{x^{(1)}, x^{(2)}, ..., x^{(m)}\}\text{, }$$
+an HMM is trained with an E-M algorithm to maximize the likelihood of the observations:
+
+$$A^*, B^*, \pi^* = \arg \max_{A, B, \pi} P(X \, | \, A, B, \pi)$$
+A particularly useful application of the E-M approach to HMMs is the Viterbi algorithm, a dynamic programming algorithm originally proposed by Andrew Viterbi \cite{viterbi}, which makes possible to compute in polynomial time the most likely sequence of states, given a sequence of observations:
+
+$$q^*_1, ..., q^*_T = \arg \max_{q_1, ..., q_T} P(q_1, ..., q_T \, | \, o_1, ..., o_T)\text{.}$$
+The idea of the algorithm is to express this probability through a recurrence relationship, and then use classic dynamic programming with memoization to compute its value faster (and in polynomial time, which wouldn't be possible otherwise).
+\\The recurrence relationship used to express the probability of the most likely sequence of state, given the observations $o_1, o_2, ..., o_T$ is the following:
+
+$$V_{1, k} = P(o_1 \, | \, k) \, \pi_k, \, \forall k \in S$$
+$$V_{t, k} = \max_{q \, \in \, S} P(o_t \, | \, q) \, A_{q, s_k} \, V_{t-1, q} \text{, }$$
+where $A$ is the transition matrix and $\pi$ is the prior distribution. The algorithm operates as follows:
+
+\begin{enumerate}[label=(\roman*), font=\itshape]
+    \item computes the base case probabilities $V_{1, k}$ for each state $k$, storing it into a $T \times K$ matrix $V$;
+    
+    \item computes each remaining entry $V_{t, k}$ of the matrix according to the recurrent relationship, taking advantage of the already stored values in the matrix, and storing into another matrix $\Ptr$ the state used to compute $V_{k, t}$ (representing the most likely state to transition from, into state $s_k$ at time $t$):
+    
+    $$\Ptr_{t, k} = \arg \max_{q} P(o_t \, | \, q) \cdot A_{q, s_k} \cdot V_{t-1, q}$$
+    
+    \item computes the most likely sequence of states using the computed values in the $V$ matrix, retrieving the sequence backwards:
+    
+    \begin{enumerate}[label=(\alph*), font=\itshape]
+        \item $q^*_T = \arg \max_q V_{T, q}$;
+        \\
+        \item $q^*_{t-1} = \Ptr_{t, q^*_t}$
+    \end{enumerate}
+\end{enumerate}
+

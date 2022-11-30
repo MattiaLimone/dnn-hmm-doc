@@ -1,0 +1,39 @@
+\subsection{GMM}
+
+A Gaussian Mixture Model (GMM) is a parametric probability density distribution represented by a weighted sum of $M$ multivariate Gaussian densities, as originally proposed by Zolfaghari and Robinson \cite{c10}.
+\\Each $n$-variate Gaussian component $\mathcal{N}\left(x \mid \mu_{k}, \Sigma_{k}\right)$ resembles the distribution of a cluster in the dataset, and can be defined by two parameters:
+
+\begin{description}
+    \item[Mean vector:] $\mu_k = [\mu_{k, 1}, \mu_{k, 2}, ..., \mu_{k, n}]$, correspondig to the $k$-th cluster's centroid $\frac{1}{|G_k|}\sum_{x \in G_k} x$;
+    
+    \item[Covariance matrix:] $\Sigma_k = ||\sigma^{(k)}_{i, j}||_{n \times n} $ such that $\sigma^{(k)}_{i, j} = Cov(X_{k, i}, X_{k, j})$ is the covariance between the $i$-th and the $j$-th feature of the samples belonging to the $k$-cluster $G_k$;
+\end{description}
+and thus it can be expressed as:
+$$
+\mathcal{N}\left(x \mid \mu_{k}, \Sigma_{k}\right)=\frac{1}{(2 \pi)^{\frac{D}{2}}\left|\Sigma_{k}\right|^{\frac{1}{2}}} e^{-\frac{1}{2}\left(x-\mu_{k}\right)^{T} \Sigma_{k}^{-1}\left(x-\mu_{k}\right)}
+$$
+That being said, a GMM is defined as a weighted combination of $M$ $n$-variate Gaussian densities, called components:
+
+$$
+P(x \mid \lambda)=\sum_{k=1}^{M} w_{k} \, \mathcal{N}\left(x \mid \mu_{k}, \Sigma_{k}\right),
+$$
+where:
+$$
+\sum_{k=1}^{M} w_{k}=1
+$$
+In GMM training, dataset clusters (and thus parameters of Gaussian components) are initially computed using a clustering algorithm (e.g. $k$-means), and then adjusted using an E-M algorithm (such as MLE \cite{mlegmm} or MAP \cite{mapgmm}), which works even if the clusters overlap with each other, since this type of algorithm uses the probability of an instance $x$ to belong to a cluster $G_j$, rather than the distance from its centroid.
+\\Concerning the component weights $w_1, w_2, ..., w_M$, they are initialized randomly and then also tuned with the E-M algorithm alongside the mean vectors and covariance matrices.
+
+Based on the structure and constraints of covariance matrices, GMMs can be divided in some different groups:
+
+\begin{description}
+    \item[Full:] each Gaussian component has its own general covariance matrix, thus the generated clusters can adopt any position/shape;
+    
+    \item[Tied:] each Gaussian component has the same general covariance matrix, hence the generated clusters can have any position (means), but must have the same shape;
+    
+    \item[Diagonal:] each Gaussian component has its own diagonal covariance matrix (i.e. the only non-zero entries are variances $\sigma^{(k)}_{i, i} = Var(X_{k, i})$), thus each cluster can have any shape, but their contour axes must be oriented along the coordinate axes;
+    
+    \item[Tied diagonal:] each Gaussian component has the same diagonal covariance matrix, hence each cluster must have the same shape and their contour axes must be oriented along the coordinate axes;
+    
+    \item[Spherical:] identical to the diagonal case, but the variances within the same covariance matrix are equal (i.e. $\sigma^{(k)}_{i, i} = \sigma^{(k)}_{j, j}, \forall i, j \in \{1, 2, ..., n\}$), thus each cluster must have a circular shape (although not necessarily the same circular shape), and their contour axes be oriented along the coordinate axes.
+\end{description}

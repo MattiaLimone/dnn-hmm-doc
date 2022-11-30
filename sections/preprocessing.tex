@@ -1,0 +1,36 @@
+\section{Preprocessing}\label{sec:preprocessing}
+Preprocessing is a critical step in any project related to machine learning, even more so in systems where background-noise or silence in training/testing audio signals is completely undesirable~\cite{jahangir:review}. SI task requires efficient feature extraction approaches from speech signals, because most of the spoken portion includes speaker-related attributes useful to the identification.
+
+TIMIT being a dataset recorded in a controlled environment, doesn't need overly complicated preprocessing operations before moving on to those typical of audio signals processing and that intersect the feature extraction phase, such as framing, windowing, spectrogram computation etc. For this reason, we just applied a limited silence removal, described below, while the operations that intersect the feature extraction phase are described in the appropriate section (\vref{sec:feature_extraction}).
+
+\subsection{Silence Removal}
+Silence removal is used to eliminate the unvoiced and silent portion of the speech signal. 
+For this purpose, input signal is divided into small segments (frames) and root mean square 
+(RMS) of each individual segment is calculated and compared with a specific threshold value~\cite{asadullah:silence_removal}.
+
+RMS value of each individual segment can be calculated as:
+$$
+\RMS_{\Segment}=\sqrt{\mean(\Segment)^{2}} \text{, }
+$$
+while threshold value is computed as:
+$$
+R_{t h}=\frac{\mu+v}{2} \text{, }
+$$
+where $v$ is the minimum RMS value of $K$ voiced signals and $\mu$ is the mean RMS value of $K$ unvoiced signals. The formula to compute $\mu$ is the following:
+$$
+\mu=\frac{1}{K} \sum_{i=1}^{K} \RMS_{\text{Unvoiced}}
+$$
+If $\RMS_{\Segment}$ of individual segment is less than $R_{th}$ then the segment id deleted. Similarly all the segments are compared with threshold value and system will delete all the unvoiced portion from the input speech signal. That being said, the silence removal function is expressed as:
+$$
+f(x)=\left\{\begin{array}{c}
+	\RMS_{\Segment} > R_{t h}, \text { voiced signal }\\
+	\RMS_{\Segment} \leq R_{t h}, \text { silent signal }
+\end{array}\right.
+$$
+As for our study, we only removed silent frames longer than $0.25s$, since shorter silence time slices could represent discriminating characteristics useful in identifying speakers.
+
+\subsection{Dataset Training/Test Subdivision}
+\label{sec:train_test_subdivision}
+
+Another fundamental aspect of the preprocessing phase is the dataset split in training and test set.
+\\As extensively described in the previous sections, the TIMIT dataset consists of 10 audios per speaker. Since the purpose of the work is speaker identification, it is necessary that audios of each speaker be present in both the training set and the test set, so we opted for the classic 80/20 split, randomly extracting 2 audios for each speaker to be included in the test set, and inserting the remaining 8 in the test set.

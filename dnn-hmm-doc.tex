@@ -1,0 +1,97 @@
+%\documentclass[11pt,a4paper,oneside,twocolumn,titlepage]{ieeeconf} 
+\documentclass[11pt,a4paper,oneside,twocolumn]{ieeeconf} 
+\usepackage[T1]{fontenc}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[english]{varioref}
+\usepackage{microtype}
+\usepackage{titling}
+\usepackage[autostyle,italian=guillemets]{csquotes} %stabilire stile quote
+
+\usepackage[backend=biber,bibstyle=numeric,citestyle=numeric-comp]{biblatex}
+\addbibresource{bibliography.bib}
+
+\usepackage{quoting}
+\quotingsetup{font=small, font=itshape}
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{caption}
+\captionsetup{tableposition=top,figureposition=bottom,font=small,format=hang,labelfont={sf,bf}}
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+\usepackage{multirow}
+\usepackage{subfig}
+
+\usepackage{fancyhdr}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{centernot}
+\usepackage{braket}
+\usepackage{amsthm}
+
+\usepackage[output-decimal-marker={.}]{siunitx}
+
+\newcommand{\omissis}{[\textellipsis\unkern]}
+\usepackage{eurosym}
+
+\usepackage{varwidth}
+\newcolumntype{M}{>{\begin{varwidth}{3cm}}c<{\end{varwidth}}} %M is for Maximal column
+\providecommand{\keywords}[1]
+{
+	\small  
+	\textbf{\textit{Keywords---}} #1
+}
+
+%Overleaf porting
+\usepackage{tikz}
+\usepackage{enumitem}
+
+\usepackage{definitions}
+
+\usepackage{hyperref}
+\hypersetup{
+	pdfpagemode={UseOutlines},
+	bookmarksopen,
+	pdfstartview={FitH},
+	colorlinks,
+	linkcolor={blue},
+	citecolor={blue},
+	urlcolor={blue}
+}
+
+\begin{document}
+	\author{
+		Andrea Terlizzi\thanks{Andrea Terlizzi, Computer Science Department, Università degli Studi di Salerno},		
+		Mattia Limone\thanks{Mattia Limone, Computer Science Department, Università degli Studi di Salerno}, 
+		Carmine Iannotti\thanks{Carmine Iannotti, Computer Science Department, Università degli Studi di Salerno} ,  	
+		Luca Strefezza\thanks{Luca Strefezza, Computer Science Department, Università degli Studi di Salerno}
+		}	
+	\thanksmarkseries{arabic}
+	\title{A Deep LSTM-CNN-HMM Neural Network\\system for Speaker Identification}
+	%\date{}
+	\maketitle
+	
+	%{
+		%\hypersetup{linkcolor=black}
+		%\tableofcontents
+	%}
+	
+	\input{sections/abstract}
+	\input{sections/introduction}
+	\input{sections/dataset}
+	\input{sections/preprocessing}
+	\input{sections/feature}
+	\input{sections/acoustic_modeling}
+	\input{sections/dnn-hmm}
+	\input{sections/architecture}
+	\input{sections/pre_training}
+	\input{sections/experiment_and_analysis}
+	\input{sections/acknowledgements}
+	
+	\printbibliography[heading=bibintoc]
+	
+\end{document}

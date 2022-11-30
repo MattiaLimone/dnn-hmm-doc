@@ -1,0 +1,11 @@
+\section{DNN-HMM}\label{sec:dnnhmm}
+Let's now dive into the core elements of DNN-HMM approach for SI, describing the general idea and architecture, which will be described in detail in section \vref{sec:architecture}.
+
+The basic idea behind DNN-HMM starts from the observation that Deep Neural Networks (DNNs) are more easily capable of learning advanced, non-linear statistical relationships from input data, require a lot less preprocessing compared to GMMs, and can even work with non-independent feature frames. That being said, it seems logical and worth trying to use a DNN as an emission function of an HMM, instead of a GMM.
+
+
+\input{sections/dnn_hmm/dnn}
+
+\input{sections/dnn_hmm/dnn_hmm_training_decoding}
+
+

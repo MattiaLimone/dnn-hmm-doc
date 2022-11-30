@@ -1,0 +1,30 @@
+\subsection{How DNN-HMM works}
+
+\paragraph{DNN-HMM training}
+In contrast to traditional DNN systems for IS, in those based on DNN-HMM, the network output classes do not correspond to the speakers to be identified, but to the states of each GMM-HMM acoustic model speaker generated \cite{si:dnnhmm}. As previously said, the state sequences computed from the speaker utterances with the Viterbi algorithm are used as labels for audio frames, therefore each neural network output corresponds to a GMM-HMM acoustic model state.
+Hence, by minimizing the categorical cross-entropy loss function $C$ on the utterances of the training set and the corresponding labels, the network is trained to predict the posterior probabilities of each HMM state $k$, given the input audio feature frame $o_t$:
+
+$$P(s_{t} = k \, | \, o_t)$$
+In this way, the network can learn meaningful features that allow it to assign to an audio the states computed from the acoustic model of its speaker (and consequently discriminate from one speaker to another).
+
+\paragraph{DNN-HMM decoding}
+In testing stage, a new audio $o = o_1, ..., o_T$ from the test set is given as input to the neural network, which outputs a posterior probability $P(s_{t} = k \, | \, o_t)$ for each frame $o_t$. As briefly mentioned earlier, the idea behind DNN-HMM is that the neural network defines the emission probabilities of the HMM, so each posterior is converted into an emission probability (likelihood) using Bayes' theorem \cite{si:dnnhmm}:
+
+$$e(o_t \, | \, s_{t} = k) = P(\, o_t | \, s_{t} = k) = \frac{P(s_{t} = k \, | \, o_t) P(o_t)}{P(s_{t} = k)}$$
+In the previous formula, the prior probability $P(s_t = k)$ can be approximated by occurrences of state $k$ in the training utterances of the corresponding speaker, as relative frequency:
+
+$$P(s_t = k) \approx \frac{\occurences(k)}{\statesspeakers \cdot \audiospeakers} $$
+On the other hand, the (audio frame) prior probability $P(o_t)$ distribution is very hard to model without strong assumptions, but since all input frames are assumed to be independent each other, it can be considered as a constant scaling/normalization factor for the emission probability, and therefore ignored completely:
+
+$$e(o_t \, | \, s_{t} = k) = P(\, o_t | \, s_{t} = k) = \frac{P(s_{t} = k \, | \, o_t)}{P(s_{t} = k)}$$
+The last step in speaker identification task with DNN-HMM is the execution of the Viterbi decoding, where:
+
+\begin{enumerate}[label=(\roman*), font=\itshape]
+	\item $o = o_1, ..., o_T$ features against each speaker DNN-HMM model using the Viterbi algorithm, which uses the transition matrices $T_j$ and prior distributions $\pi_j$ of each speaker (from the GMM-HMM acoustic models), which gives in ouput a sequence of states $q_1, ..., q_T$ and its posterior probability:
+	
+	$$P_{\pi_j, T_j}(q_1, ..., q_T \, | \, o_1, ..., o_T) = \Viterbi_{P}^{\pi_j, T_j}(o)$$
+	
+	\item the audio is identified as belonging to the speaker DNN-HMM model which maximizes this probability:
+	
+	$$z^* = \arg \max_j P_{\pi_j, T_j}(q_1, ..., q_T \, | \, o_1, ..., o_T)$$
+\end{enumerate}

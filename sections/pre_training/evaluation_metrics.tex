@@ -1,0 +1,80 @@
+\subsubsection{Evaluation Metrics}
+Table \vref{tab:training_values_in_known_methods} illustrates the error rate analysis of the proposed autoencoders compared with some existing algorithms, such as the multiobjective evolutionary optimization algorithm~\cite{c4}, other deep convolutional and recurrent autoencoder neural networks~\cite{c5}, continual learning algorithms~\cite{c6}, enhancement parameter with a genetic algorithm~\cite{c7}, DTW~\cite{c8} and HHSAE-ASR~\cite{c9}. 
+
+There are many possible metrics to evaluate the performances of autoencoders, but the general idea is to evaluate the reconstruction error like a distance between input and reconstructed input.
+
+\paragraph{Mean Absolute Error}
+$\mse$ evaluates the absolute distance of the observations (entries of the dataset) to the predictions on a regression, taking the average over all observations. We use the absolute value of the distances so that negative errors are accounted properly:
+
+$$
+\mae = \frac{1}{n} \sum_{i=1}^{n} \abs*{ \, \,\, y_{i}^{\text {real }}-y_{i}^{\text {pred }}}
+$$
+
+\paragraph{Mean Squared Error}
+Another way to deal with negative values is by squaring the distance, so that the results are positive. This is done by the $\mse$, and higher errors (or distances) weight more in the metric than lower ones, due to the nature of the power function:
+
+$$
+\mse=\frac{1}{n} \sum_{i=1}^{n}\left(y_{i}^{\text {real }}-y_{i}^{\text {pred }}\right)^{2}
+$$
+
+\paragraph{Root Mean Squared Error}
+A backlash in $\mse$ is the fact that the unit of the metric is also squared, so if the model tries to predict price in $US\$$, the $\mse$ will yield a number with unit $(US\$)^2$ which does not make sense. $\rmse$ is used then to return the $\mse$ error to the original unit by taking the square root of it, while maintaining the property of penalizing higher errors:
+
+$$
+\rmse=\sqrt{\mse}=\sqrt{\frac{1}{n} \sum_{i=1}^{n}\left(y_{i}^{\text {real }}-y_{i}^{p r e d}\right)^{2}}
+$$
+
+\paragraph{R$^2$}
+It is a statistical measure in a regression model that determines the proportion of variance in the dependent variable that can be explained by the independent variable. In other words, r-squared shows how well the the regression model fits the data.
+Denoting with $\bar{y}$ the mean of the real label values, and with $y_i$, $f_i$ the real label value and model prediction on $i$-th instance, respectively:
+$$
+\bar{y}=\frac{1}{n} \sum_{i=1}^{n} y_{i} \text{, }
+$$
+then the variability of the data set can be measured with two sums of squares formulas:
+\begin{itemize}
+	\item the sum of squares of residuals, also called the residual sum of squares:
+	$$
+	S S_{\text {res }}=\sum_{i}\left(y_{i}-f_{i}\right)^{2}=\sum_{i} e_{i}^{2}
+	$$
+	
+	\item The total sum of squares (proportional to the variance of the data):
+	$$
+	S S_{\text {tot }}=\sum_{i}\left(y_{i}-\bar{y}\right)^{2}
+	$$
+\end{itemize}
+That being said, the most general definition of the coefficient of determination is:
+
+$$
+R^{2}=1-\frac{S S_{\mathrm{res}}}{S S_{\mathrm{tot}}}
+$$
+In the best case, the modeled values exactly match the observed values, which results in $SS_{res} = 0$ and $R^2 = 1$. A baseline model, which always predicts $\bar{y}$, will have $R^2 = 0$. Models that have worse predictions than this baseline will have a negative $R^2$.
+
+\paragraph{Analysis}
+$\mse$ and $\rmse$ are very useful in understanding whether outliers generate noise in the prediction, while MAE is slightly less affected by them, so using the one or the other is a fair trade-off.\\
+
+Optimising for $\mse$ for example, means that the generated output values are symmetrically close to the input values, meaning that an higher-than-real value is penalised by the same amount as an equally lowered one.
+
+As for the obtained results shown in \vref{tab:training_values_in_known_methods}, it's worth noting that although the $\mae$ and $\rmse$ values of our autoencoders are particularly high if compared to the others mentioned above, this is fairly intentional and due both to the choice of not normalizing the input data, and to the applying of heavy regularization in order to make the learned weights and representations as sparse as possible and suited for usage in classification task.
+Nevertheless, it's also interesting to note how both autoencoders achieve good $R^2$ values, which are satisfactorily high in the case of the convolutional one and very high in the case of the recurrent one.
+
+\begin{footnotesize}
+	\begin{table}
+		\centering
+		\caption{training values Error rate in Speech Processing.}
+		\label{tab:training_values_in_known_methods}
+		\begin{tabularx}{0.5\textwidth}{Xrrr}
+			\toprule
+			\textbf{Methods} 		& \shortstack{\textbf{MAE}}    	& \shortstack{\textbf{RMSE}} & \shortstack{\textbf{$R^2$}}      \\
+			\midrule
+			Multiobjective evolutionary\\ optimisation algorithm \cite{c4}  &N/A           & 1.43          &N/A\\
+			Deep convolution\\encoder and LSTM-RNN \cite{c5}          	    &N/A           & 1.38          &N/A\\[0.25cm]
+			Continual learning algorithms \cite{c6} 					    &N/A           & 1.25          &N/A\\[0.25cm]
+			Genetic algorithm \cite{c7}									    &N/A           & 1.14          &N/A\\[0.25cm]
+			MFCC and DTW \cite{c8}										    &N/A           & 1.12          &N/A\\[0.25cm]	
+			HHSAE-ASR \cite{c9}												&N/A           & 1.087         &N/A\\[0.25cm]
+			Convolutional Autoencoder\\with Mel Spectrogram				    &4.570         &6.227		   &0.8464\\[0.25cm]	
+			LSTM Autoencoder\\with MFCC									    &1.796		   &2.885		   &0.9983\\
+			\bottomrule
+		\end{tabularx}	
+	\end{table}
+\end{footnotesize}

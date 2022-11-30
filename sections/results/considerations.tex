@@ -1,0 +1,18 @@
+\subsection{Considerations and future works}
+To the best of our knowledge, this is the first study that goes to apply DNN-HMM for text independent SI using a non-sequential network architecture or using both convolutional and LSTM layers.
+
+As promising as the performances achieved are, the scope for improvement of the network and the variety of experiments that can still be carried out remains very high:
+
+\begin{description}
+	\item[Fine-tuning:] re-training the model that has already been trained on different datasets to evaluate performances of transfer learning in DNN-HMM context;
+	
+	\item[Parameter tweaking:] additional parameter and hyperparameter tweaking on the proposed architecture and speaker acoustic models to try improving performance even further;
+	
+	\item[Data augmentation:] training the model with additional augmented data to try improving the model generalization capability even more;
+	
+	\item[Variations of the architecture:] trying out variations of the architecture, for example replacing the current convolutional branch with more complex architectures like SincNet one \cite{si:sincnet} or other convolutional architectures;
+	
+	\item[Alternative/Additional features:] training the model using other typologies of features like LPCCs, or expanding the existing architectures to take advantage of them (e.g. adding a new branch);
+	
+	\item[Application to other datasets:] applying the same methodology and network architecture to other datasets, especially in-the-wild ones, and to the noise-added TIMIT.
+\end{description}

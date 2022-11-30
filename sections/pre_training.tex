@@ -1,0 +1,14 @@
+\section{Pre-training}\label{sec:pre_training}
+The concept of pre-training is inspired by human beings. Thanks to an innate ability, we don’t have to learn everything from scratch. Instead, we transfer and reuse our old knowledge of what we have learned in the past to understand new knowledge and handle a variety of new tasks.
+
+In Deep Learning, pre-training imitates the way human beings process new knowledge. That is: using model parameters of tasks that have been learned before to initialize the model parameters of new tasks. In this way, the old knowledge helps new models successfully perform new tasks from old experience instead of from scratch.
+
+For all these reasons, we performed pre-training on both the two branches of the previously described (\vref{sec:architecture}) neural network architecture.
+
+\input{sections/pre_training/autoencoders}
+
+\input{sections/pre_training/conv_autoencoder}
+
+\input{sections/pre_training/rec_autoencoder}
+
+\input{sections/pre_training/evaluation_metrics}

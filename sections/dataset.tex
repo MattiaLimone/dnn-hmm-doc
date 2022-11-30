@@ -1,0 +1,63 @@
+\section{Dataset}\label{sec:dataset}
+
+In this research we worked on the \textit{DARPA TIMIT - Acoustic-Phonetic Continuous Speech Corpus}~\cite{garofolo:timit}. This dataset has been designed to provide speech data for the acquisition of acoustic-phonetic knowledge and for the development and evaluation of automatic speech recognition (ASR) systems. TIMIT has resulted from the joint efforts of several sites under sponsorship of the Defense Advanced Research Projects Agency - Information Science and Technology Office (DARPA-ISTO). Text corpus design was a joint exertion among the Massachusetts Institute of Technology (MIT), Stanford Research Institute (SRI), and Texas Instruments (TI).
+
+\subsection{Speaker Distribution}
+TIMIT contains a total of 6300 sentences, 10 sentences for each of 630 speakers from 8 major dialect regions of the United States. Table \vref{tab:dialect_distribution} shows the number of speakers for the 8 dialect regions, broken down by sex. A speaker's dialect region is the geographical area of the U.S. in which they lived during their childhood years. The geographical areas correspond with recognized dialect regions in U.S., with the exception of the Western region (DR7) in which dialect boundaries are not known with any confidence, and dialect region 8 (DR8), where the speakers moved around a lot during their childhood.
+
+\begin{table}
+	\caption{Dialect distribution of speakers.}
+	\label{tab:dialect_distribution}
+	\centering
+	\begin{tabularx}{0.5\textwidth}{llll}
+		\toprule
+		\textbf{DR} & \textbf{Male} & \textbf{Female} & \textbf{Total} \\
+		\midrule
+		1 & 31 (63\%) & 18 (27\%) & 49 (8\%) \\
+		2 & 71 (70\%) & 31 (30\%) & 102 (16\%) \\
+		3 & 79 (67\%) & 23 (23\%) & 102 (16\%) \\
+		4 & 69 (69\%) & 31 (31\%) & 100 (16\%) \\
+		5 & 62 (63\%) & 36 (37\%) & 98 (16\%) \\
+		6 & 30 (65\%) & 16 (35\%) & 46 (7\%) \\
+		7 & 74 (74\%) & 26 (26\%) & 100 (16\%) \\
+		8 & 22 (67\%) & 11 (33\%) & 33 (5\%) \\
+		\midrule
+		All & 438 (70\%) & 192 (30\%) & 630 (100\%) \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+\subsection{File Structure}
+The speech and associated data is organized in the dataset according to the following directory hierarchy:
+\begin{verbatim}
+	/data/
+		<USAGE>/
+			<DIALECT>/
+				<SEX><SPEAKER_ID>/
+					<SENTENCE_ID>.<FILE_TYPE>
+\end{verbatim}
+where:
+\begin{itemize}
+	\item \verb!usage = train | test!;
+	\item \verb|dialect = DRi|, \verb*|i| $\in \{1, ..., 8\}$;
+	\item \verb!sex = M | F!;
+	\item \verb|speaker_id = <initials><digit>|:
+	\begin{itemize}
+		\item \verb|initials|: speaker initials, 3 capital letters;
+		\item \verb|digit|: number between $0$ and $9$ to differentiate speakers with identical initials;
+	\end{itemize}
+	\item \verb|sentence_id =| \\ \verb|= <text_type><sentence_number>|:
+	\begin{itemize}
+		\item \verb!text_type = SA | SI | SX!;
+		\item \verb|sentence_number|: $1 ... 2342$;
+	\end{itemize}
+	\item \verb!file_type:! \\ \quad \verb!wav | txt | wrd | phn!
+\end{itemize}
+The three values that \verb|text_type| can assume stands for dialect sentences (SA), phonetically-compact sentences (SX) and phonetically-diverse sentences (SI). Even though important in speech recognition, these data were not particularly relevant during execution of the experiments conducted in this study, which is focused on text-independent SI task.
+
+Finally, all the files of type .txt, .wrd and .phn are transcription files, not used in the context of our work.
+
+The following is an example of the structure described above: \verb*|/data/train/DR1/FCJF0/SA1.wav|, indicating: training set, dialect region 1, female speaker with ID CJF0, sentence text "SA1", speech waveform file.
+
+\subsection{Suggested Training/Test Subdivision}
+TIMIT comes with texts and speakers already subdivided into suggested training and test sets. This subdivision has evolved over time to meet different criteria (as described by the authors~\cite[20]{garofolo:timit}). In the context of this research, the proposed subdivision has been ignored in order to create a new one more suitable for its intended purposes, as described in section \vref{sec:train_test_subdivision}.

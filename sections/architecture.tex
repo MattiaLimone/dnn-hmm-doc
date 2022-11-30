@@ -1,0 +1,19 @@
+\section{Proposed architecture}\label{sec:architecture}
+To our knowledge, the only few studies that applied DNN-HMM technique to text-independent SI tasks used deep feed-forward neural networks \cite{si:dnnhmm}, which are hardly able to capture temporal relationships between feature frames due to their sequential structure unlike, for example, Recurrent Neural Networks (RNNs).
+
+On the other hand, as multiple studies in the SI field suggested, the use of 1D/2D Convolutional Neural Networks (CNNs) in combination with log-scaled spectrum/Mel spectrum features can greatly improve the performance of a text-independent SI system, due to the high-level feature extraction power of this type of network \cite{si:lstm}.
+
+This simple observation led us to believe that the combination of the features extracted by both these typologies of networks could lead to even better identification performances, especially if combined to the acoustic modeling power of HMMs.
+
+Thus, the proposed architecture is non-sequential, and combines both convolutional and recurrent layers, trying to combine both kind of features to achieve better performance.
+
+Before describing the mentioned architecture, an overview of the most important network designs that make up its layers will be given.
+
+\input{sections/architecture/rnn}
+
+\input{sections/architecture/lstm}
+
+\input{sections/architecture/cnn}
+
+\input{sections/architecture/recconvsnet}
+	

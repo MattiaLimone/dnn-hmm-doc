@@ -1,0 +1,55 @@
+\subsection{GMM-HMM} 
+Given these definitions, a GMM-HMM is a HMM where emission distribution of each state is defined by a GMM with $M$ Gaussians:
+
+$$e(o_t \, | \, s) = P(o_t \mid \lambda)=\sum_{k=1}^{M} w_{k} \, \mathcal{N}\left(x \mid \mu_{k}, \Sigma_{k}\right),$$
+Often, GMM-HMM are used to build acoustic models that represent the feature distribution of a specific class of audios, which is useful in a plenty of different tasks. In speech recognition for example, GMM-HMM acoustic models are built to represent the phoneme distribution \cite{gmmhmmspeechrecognition}, \cite{asr:dnnhmm0}, and each state corresponds to a phoneme, while in scene classification each GMM-HMM acoustic model is built to represent the audios recorded in a particular scene/context \cite{dnnhmmscene}. 
+
+Not too differently, in SI task, which is the main subject of this study, GMM-HMM acoustic models are built to represent the audios recorded by a specific speaker. Therefore, for $p$ speakers there will be $p$ GMM-HMM models, each trained with an E-M algorithm on utterances of the corresponding speaker:
+
+$$\HMM_1, \HMM_2, ..., \HMM_p$$
+At identification time, an unknow audio $o = o_1, o_2, ..., o_T$ is scored against each GMM-HMM acoustic model using Viterbi algoritm \cite{gmmhmmspeakeridentification}, and the speaker is identified by the most likely path among all the speaker acoustic models:
+
+$$s = \arg \max_i \Viterbi_P(o, \HMM_i) \text{, }$$
+where $\Viterbi_P(o, \HMM_i)$ is the posterior probability of the most likely $\HMM_i$ state path given $o$, according to the Viterbi algorithm:
+
+$$\Viterbi_P(o, \HMM_i) = \max_{q_1, ..., q_T} P_{i}(q_1, ..., q_T \, | \, o_1, ..., o_T)$$
+This methodology has been successfully applied in multiple past studies with good results \cite{gmmhmmspeakeridentification}, alongside with the GMM-standalone acoustic modeling, which was applied to the TIMIT dataset too \cite{gmmspeakeridentification}.
+
+As for the choice of the state number $K$ for each acoustic model, it is either chosen application domain-wise, in tasks like speech recognition where each state can represent a phoneme (e.g. triphone \cite{asr:triphone}), or can be chosen empirically through grid search methods, using instance likelihood as score.
+\\The same applies to the mixture number $M$, whose optimal value can vary considerably depending on the dataset, as shown in multiple studies \cite{si:gmmhmm1}, \cite{si:gmmhmm2}, \cite{polishasr:gmmhmm}.
+
+Finally, it is important to note that each HMM topology suits different types of tasks; in ASR, for example, letf-to-right topologies are often used, since it fits the phonetic structure of speech, which involves some phonemes before others overtime. In SI or scene classification, on the other hand, the most suitable topology turns out to be the ergodic \cite{si:dnnhmm}, \cite{dnnhmmscene}, since the structure of audio recognition patterns for these two types of task may not necessarily be ordered, as they are not related to phonemes.
+
+\paragraph{GMM-HMM in DNN-HMM}
+In DNN-HMM approach to SI, GMM-HMM acoustic models are built using feature extracted from the utterances of the training set (often MFCCs/MFCCs \& deltas \cite{si:dnnhmm}) to represent the audios recorded by each speaker, and then used with Viterbi algorithm to generate frame-level audio labels that will be later used to train the DNN model.
+
+More specifically, for each audio $o = o_1, o_2, ..., o_T$ from the speaker $j$, where each $o_t$ is an audio frame containing some kind of feature (raw audio, power/log-scaled STFT spectrum, power/log-scaled Mel spectrum, MFCCs/ MFCCs \& deltas, LPCCs, ...), Viterbi algorithm is applied to generate the most likely state sequence (this step is sometimes also called "forced alignment" \cite{si:dnnhmm}, \cite{dnnhmmscene}):
+
+$$q^* = q^*_1, q^*_2, ..., q^*_T = \Viterbi(o, \HMM_j) \text{, }$$
+where $\Viterbi(o, \HMM_j)$ is the most likely $\HMM_j$ state path given $o$, according to the Viterbi algorithm:
+$$\Viterbi(o, \HMM_j) = \arg \max_{q_1, ..., q_T} P_j(q_1, ..., q_T | o_1, ..., o_T)$$
+The generated states $q^* = q^*_1, q^*_2, ..., q^*_T$ are used as frame-level labels for the audio frames $o = o_1, o_2, ..., o_T$, so that each frame $o_t$ corresponds to the state label $q^*_t$. 
+\\As will be explained shortly, these labels will later be used to train the underlying DNN model used in the DNN-HMM approach.
+
+In this study, grid search has been performed to optimize the mixture $M$ and state number $K$ of our ergodic GMM-HMM acoustic models with diagonal covariance type. Results have been varying depending on the type of features used, as shown in table \vref{tab:gmmhmmgridsearch}.
+
+It's noteworthy that acoustic models generated using log-scaled Mel-spectrum and LPCC features were not used in later stages of the study (e.g. training of the neural network model), but were generated for comparative purposes only (although this could be subject of future studies).
+
+\begin{footnotesize}
+	\begin{table}
+		\centering
+		\caption{GMM-HMM grid-search Results}
+		\label{tab:grid_search_results}
+		\begin{tabularx}{0.5\textwidth}{Xcc}
+			\toprule
+			\textbf{Feature} 			& \textbf{States} & \textbf{Mixtures}    \\
+			\midrule
+			MFCCs \& deltas	              		& 8                      & 3         \\[0.25cm]
+			LPCCs             			& 4                      & 2         \\[0.25cm]
+			Log-scaled Mel Spectrum features   			& 3  					 & 2         \\ 
+			\bottomrule
+		\end{tabularx}
+		
+	\end{table}\label{tab:gmmhmmgridsearch}
+	
+\end{footnotesize}

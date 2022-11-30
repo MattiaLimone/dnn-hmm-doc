@@ -1,0 +1,14 @@
+\section{Introduction}
+Speaker identification (SI) tasks can be classified in two big groups: text-dependent and text-independent.
+
+In the first type of task, identification is done with the help of a passphrase that the individual has to pronounce so that the system can recognize him or her, based both on the audio features extracted by the speaker audio utterances and the spoken words.
+
+Text-independent SI, on the other hand, is entirely based on features extracted from audios, and cannot rely on either the phonetic structure of the spoken sentence or its content.
+
+This study, inspired by recent and multiple encouraging results in the application of deep neural networks to text-independent SI \cite{si:lstm}, sometimes used in conjunction with other types of models such as Hidden Markov Models (HMMs) or Gaussian Mixture Models (GMMs) (in so-called "hybrid approaches" \cite{si:dnnhmm}), proposes a new approach to DNN-HMM methodology applied to this task, involving the use of both deep Long-Short-Term-Memory networks (LSTMs) and Convolutional Neural Networks (CNNs).
+
+To our knowledge, DNN-HMM hybrid approaches are still largely untested in text-independent SI, which is one of the reasons why we decided to use LSTM Neural Networks and CNNs, both of which fit perfectly the SI task, as widely demonstrated in the literature \cite{si:cnn} \cite{si:lstm}.
+
+The study, conducted on the TIMIT dataset, takes advantage of some of the most historically appreciated and used features in the audio and speech processing literature, such as MFCCs, LPCCs, and log-scaled Mel spectrum.
+
+The work is organized as follows: section \vref{sec:dataset} describes the used dataset in detail, presenting the file structure and its composition; sections \vref{sec:preprocessing}, \vref{sec:feature_extraction}, \vref{sec:acoustic_modeling} explain the preprocessing, feature extraction and HMM acoustic modeling steps made prior to the model training; sections \vref{sec:dnnhmm} and \vref{sec:architecture} describe the applied DNN-HMM technique and the proposed neural network architecture; finally, sections \vref{sec:pre_training} and \vref{sec:results} describe the experiment carried out in detail, starting with the pre-training phase of the model layers, going through the training of the model and finally arriving at the results obtained and possible future developments. 

@@ -1,0 +1,85 @@
+\subsection{Convolutional Neural Network (CNN)}
+Convolutional neural network (CNN) is a class of artificial neural networks that has become dominant in various computer vision and signal processing tasks and is attracting interest across a variety of domains.
+CNNs are capable to automatically and adaptively learn hierarchies of high-level features through layers of small weight filters representing the features.
+Usually, CNN architectures are composed of multiple building blocks, such as convolution layers, batch normalization and pooling layers.
+
+
+\paragraph{Convolutional Layer} 
+A convolutional layer $l_m$ receives as input a signal $\boldsymbol{x}^{(m-1)}$ with $K_{m}$ channels (either raw input or the output of $(m-1)$-th layer) and computes as output a new signal $\mathbf{x}^{(m)}$ composed of $O_{m}$ channels. The output at each channel is known as a \textbf{feature map}, and is computed as \cite{cnnbook}:
+
+$$
+\boldsymbol{x}_{o}^{(m)}=g_{m}\left(\sum_{k} \boldsymbol{w}_{o,k}^{(m)}* \boldsymbol{x}_{k}^{(m-1)}+b_{o}^{(m)}\right)
+$$
+where $*$ denotes the 1D convolution operation:
+
+$$
+\boldsymbol{w}_{o, k} * \boldsymbol{x}_{k}[t] = \sum_{p} \boldsymbol{x}_{k}[t - p] \cdot  \boldsymbol{w}_{o, k}[p] \text{, }
+$$
+where $\boldsymbol{W}_{o,k}^{(m)} \in R^{P_{m}}$ is vector called \textbf{convolutional kernel}, $b_{o}^{(m)} \in \mathbb{R}$ is a bias vector and $g_m$ is the activation function applied to the final result. The convolutional kernel $\boldsymbol{w}_{o, k}^{(m)}$ act as the trainable parameters of a filter that the layer can use to detect or enhance some feature in the incoming signal frames. The weights and the consequent feature detected/enhanced by the filter are learned during the training process just like the weight matrices of fully-connected neural networks or RNN.
+
+\paragraph{Batch Normalization Layer} 
+Batch normalization is a technique that aims to accelerate the training of deep neural networks by reducing the shift of internal covariates. 
+This is done through a normalization operation that fixes the means and variances of layer inputs at the batch level. This operation also has a number of extremely beneficial "side" effects:
+\begin{itemize}
+	\item strong reduction in the dependence of gradients on parameter scaling or their initial values, which allows much higher learning rates to be used without the risk of divergence or gradient exploding;
+	\item regularization of the activation values of model units, which reduces the need for dropout or other hard-regularization techniques.
+\end{itemize}
+Batch normalization is applied as follows to a batch $\mathcal{B}$ with $m$ instances \cite{batchnormalization}:
+
+\begin{enumerate}[label=(\roman*), font=\itshape]
+	
+	\item computes the mean and variance of the batch $\mathcal{B}$:
+	
+	$$
+	\begin{gathered}
+		\mu_{\mathcal{B}}=\frac{1}{m} \sum_{i=1}^{m} x_{i} \\
+		\sigma_{\mathcal{B}}^{2}=\frac{1}{m} \sum_{i=1}^{m}\left(x_{i}-\mu_{\mathcal{B}}\right)^{2} \\
+	\end{gathered}
+	$$
+	
+	\item computes the normalized instance $\hat{x}_{i}$ for each $i \in \{1, 2, ..., m\}$:
+	
+	$$
+	\begin{gathered}
+		\hat{x}_{i} = \frac{x_{i} - \mu_{\mathcal{B}}}{\sqrt{\sigma_{\mathcal{B}}^{2} + \epsilon}} \text{, }
+	\end{gathered}
+	$$
+	where $\epsilon$ is a very small value (e.g. machine epsilon) added to prevent division by zero.
+	
+	\item computes the layer output for the instance $\hat{x}_i$:
+	
+	$$
+	\begin{gathered}
+		y_{i} = \gamma \, \hat{x}_{i} + \beta = \operatorname{BN}_{\gamma, \beta}\left(x_{i}\right) \text{, }
+	\end{gathered} 
+	$$
+	where $\gamma$ and $\beta$ are learnable parameters tuned during back-propagation.
+\end{enumerate}
+
+
+\paragraph{Pooling Layer}
+The pooling layers of a CNN implement a dimensionality reduction transformation designed to lower the number of trainable parameters for subsequent layers, allowing them to focus on larger areas of the input patterns while retaining most of the information they contain.
+
+Given an input signal $\boldsymbol{x}^{(m-1)}$ with $K_m$, a 1D pooling layer with pool size $P_{m} \in \mathbb{N}$ and strides $\alpha_{m} \in \mathbb{N}$ is a channel-wise operation like the following \cite{cnnbook}:
+
+$$
+\boldsymbol{x}_{o}^{(m)}[t] = \kappa \cdot \left( \sum_{p} \left(\boldsymbol{x}_{o}^{(m-1)} \left[\alpha_{m} \cdot t + p \right] \right)^{\rho}\right)^{1 / \rho}
+$$
+where $\kappa, \rho \in \mathbb{N}$ are fixed parameters depending on the type of pooling we are applying to the data.
+
+It's worth noting that the use of $P_{m}=\alpha_{m}$ corresponds to dividing each channel of the input signal into non-overlapping $P_{m}$ patches (regions) and replacing the values in each region with a single value calculated on the basis of $\rho$ and $\kappa$.
+
+In max pooling layers $(\rho = \infty, \kappa = 1)$, the output of the above formula value is the maximum of the values found in the patch:
+
+$$
+\begin{gathered}
+	\lim_{\rho \to \infty} \left(\sum_{p} \left(x^{(m-1)}_o\left[\alpha_{m} \cdot t + p\right]\right)^\rho \right)^{1/\rho} = \\
+	\max \left\{x^{(m-1)}_o\left[\alpha_{m} \cdot t + p\right] : p \in \{1, 2, ..., P_m\}\right\} \\
+\end{gathered}
+$$
+In average pooling layers on the other hand, which were also used in this study, $(\rho = 1, \kappa = 1/P_m)$, the result is the average of the values:
+
+$$
+\boldsymbol{x}_{o}^{(m)}[t] = \frac{1}{P_m} \cdot \sum_{p} \boldsymbol{x}_{o}^{(m-1)} \left[\alpha_{m} \cdot t + p \right]
+$$
+	
